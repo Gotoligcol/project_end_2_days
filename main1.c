@@ -34,22 +34,22 @@ void game_exit(int mode_graphique, int buff, int score)
  //Sorties : +
  //Date de dernière modification :06/12/2015
  //Nature de la dernière modif :Commentaire et correction des warnings 
- //Version : 7.0
+ //Version : 2.0
  ////////////////////////////////////////////////
     char input[50];
     int i;
-    if (mode_graphique)//mode graphique
+    if (mode_graphique)//propose de sauvegarder le score (ici en mode graphique)
             {
                 BITMAP* buffer;
-                buffer=create_bitmap(TSPRITE*19, TSPRITE*15);
-                clear_to_color(buffer,makecol(0,0,0));
-                if(menu_oui_non(buffer, "score"));
+                buffer=create_bitmap(TSPRITE*19, TSPRITE*15);//créer une image de la taille de l'écran
+                clear_to_color(buffer,makecol(0,0,0));//elle est noire
+                if(menu_oui_non(buffer, "score"));//appel du menu_oui_non (propose un choix d'enregistrement du mot saisi, voir level_editor.c)
                 else
                 {
-                    saisie_nom(input);
-                    sauvegarde_score(input, score);
+                    saisie_nom(input);//appel la fonction qui permet de saisir un nom sous allegro
+                    sauvegarde_score(input, score);//sauvegarde le score
                 }
-                destroy_bitmap(buffer);
+                destroy_bitmap(buffer);//détruit l'image et libère donc sa mémoire
                 clear_keybuf();
                 set_gfx_mode(GFX_TEXT,80,25,0,0);
                 allegro_exit();
@@ -90,26 +90,29 @@ void saisie_nom(char imput[50])
  //Sorties : +
  //Date de dernière modification :06/12/2015
  //Nature de la dernière modif :Commentaire et correction des warnings
- //Version : 8.0
+ //Version : 3.0
  ////////////////////////////////////////////////
-    BITMAP* sauvegarde;
+    BITMAP* sauvegarde;//0 déclaration des variables locales
     BITMAP* buffer;
     int i;
     int read;
-    buffer=create_bitmap(TSPRITE*19, TSPRITE*15);
-    clear_to_color(buffer,makecol(0,0,0));
+    buffer=create_bitmap(TSPRITE*19, TSPRITE*15);//création d'une image
+    clear_to_color(buffer,makecol(0,0,0));//noire
+    textprintf_ex(buffer, font, 192-2*32,160+7*LIGNE,makecol(255,255,255),-1,"quel est votre pseudo?");//écris une demande sur le pseudo du joueur
     sauvegarde= create_bitmap(19* TSPRITE, 15*TSPRITE);
-    textprintf_ex(buffer, font, 192-2*32,160+7*LIGNE,makecol(255,255,255),-1,"quel est votre pseudo?");
-    sauvegarde= create_bitmap(19* TSPRITE, 15*TSPRITE);
-    blit(buffer, sauvegarde, 0,0,0,0, 19*TSPRITE, 15*TSPRITE);
-    blit(sauvegarde, screen, 0,0,0,0, 19*TSPRITE, 15*TSPRITE);
-    clear_keybuf();
-    Sleep(200);
-    while(!key[KEY_ENTER])
+    blit(buffer, sauvegarde, 0,0,0,0, 19*TSPRITE, 15*TSPRITE);//copie buffer dans sauvegarde
+    blit(buffer, screen, 0,0,0,0, 19*TSPRITE, 15*TSPRITE);//affiche buffer à l'écran
+    clear_keybuf();//vide le buffer de touche, évite les touches parasites
+    Sleep(200);//évite que l'appui de "ENTREE" précédent interfère
+    while(!key[KEY_ENTER])//tant que ENTREE n'est pas appuyé
     {
-        if (key[KEY_BACKSPACE])
+        if (key[KEY_BACKSPACE])//si l'utilisateur appuie sur "BACKSPACE", efface ce qui vient d'être écrit
         {
-            if (imput[i]!='\0') imput[--i] = '\0';
+            if (imput[i]!='\0') 
+            {
+             imput[i] = '\0';
+             i--;
+            }
             blit(sauvegarde, buffer, 0,0,0,0, 19*TSPRITE, 15*TSPRITE);
             textprintf_ex(buffer, font, 192-2*32,160+9*LIGNE,makecol(255,255,255),-1,"%s", imput);
         }
